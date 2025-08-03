@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+authors = [
+   { name = "Diego Sanchez", email = "ds973@cornell.edu"},
+]
+name = "CryoJoltz"
+version = "0.0.1"
+dependencies = [
+    "numpy==1.26.4",
+    "cryojax",
+    "boltz==2.0.3",
+    "jax==0.4.38",
+    "jaxlib==0.4.38",
+    "equinox==0.11.10",
+]
