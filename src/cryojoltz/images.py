@@ -6,7 +6,7 @@ from cryojax.constants import (
 from cryojax.ndimage import downsample_with_fourier_cropping
 import jax.numpy as jnp
 
-def simulate_image_from_atoms(atom_positions, atom_types, shape=(240, 240, 240), voxel_size=1.0, downsampling_factor=3):
+def simulate_image_from_atoms(atom_positions, atom_types, pixel_size=1.0):
     """
     Generates a simulated cryo-EM-style image from atomic positions and types.
 
