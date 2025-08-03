@@ -35,36 +35,24 @@ def simulate_image_from_atoms(atom_positions, atom_types, shape=(240, 240, 240),
         read_peng_element_scattering_factor_parameter_table())
 
     # Create atomic potential
-    atom_potential = cxs.PengAtomicPotential(
+    potential = cxs.PengAtomicPotential(
         atom_positions,
         scattering_factor_a=scatter_params["a"],
         scattering_factor_b=scatter_params["b"],)
 
     # Evaluate potential on a 3D grid
-    real_voxel_grid = atom_potential.as_real_voxel_grid(
-        shape,
-        voxel_size,
-        batch_size_for_z_planes=1,)
+    ctf=cxs.AberratedAstigmaticCTF(defocus_in_angstroms=10000.0,
+    astigmatism_in_angstroms=-100.0,
+    astigmatism_angle=10.0,
+)
+    transfer_theory = cxs.ContrastTransferTheory(ctf, amplitude_contrast_ratio=0.1)
+    config = cxs.BasicConfig((128, 128), pixel_size, 300, pad_options = dict(shape=(128, 128)))
 
-    # Reduce resolution
-    downsampled_voxel_grid = downsample_with_fourier_cropping(
-        real_voxel_grid,
-        downsampling_factor,)
-    downsampled_voxel_size = downsampling_factor * voxel_size
+    image_model = cxs.make_image_model(
+    potential,
+    config,
+    pose,
+    transfer_theory,
+    normalizes_signal=True,)
 
-    # Convert to Fourier potential
-    voxel_potential = cxs.FourierVoxelGridPotential.from_real_voxel_grid(
-        downsampled_voxel_grid, downsampled_voxel_size)
-
-    # Project the potential to 2D
-    integrator = cxs.FourierSliceExtraction()  # <- si usas equinox ≥ 0.11.x
-    config = cxs.BasicConfig(
-        shape=voxel_potential.shape[0:2],
-        pixel_size=voxel_potential.voxel_size,
-        voltage_in_kilovolts=300.0,)
-    integrated_potential = integrator.integrate(
-        voxel_potential,
-        config,
-        outputs_real_space=True,)
-
-    return integrated_potential
+    return image_model.simulate()
