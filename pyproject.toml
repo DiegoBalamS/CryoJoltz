@@ -9,11 +9,11 @@ authors = [
 name = "CryoJoltz"
 version = "0.0.1"
 dependencies = [
-    "numpy==1.26.4",
+    "numpy",
     "cryojax",
-    "boltz==2.0.3",
-    "jax==0.4.38",
-    "jaxlib==0.4.38",
-    "equinox==0.11.10",
+    "boltz",
+    "jax",
+    "jaxlib",
+    "equinox",
     "joltz"
 ]
